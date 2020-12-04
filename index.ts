@@ -71,6 +71,7 @@ export interface Config {
     minVisible?: number;
     /** Close window that is loading if splashscreen is closed by user (default: true). */
     closeWindow?: boolean;
+    windowConstructor: any;
 }
 /**
  * The actual splashscreen browser window.
@@ -90,12 +91,13 @@ export const initSplashScreen = (config: Config): BrowserWindow => {
         delay: config.delay ?? 500,
         minVisible: config.minVisible ?? 500,
         closeWindow: config.closeWindow ?? true,
+        windowConstructor: config.windowConstructor ?? BrowserWindow
     };
     xConfig.splashScreenOpts.frame = false;
     xConfig.splashScreenOpts.center = true;
     xConfig.splashScreenOpts.show = false;
     xConfig.windowOpts.show = false;
-    const window = new BrowserWindow(xConfig.windowOpts);
+    const window = new xConfig.windowConstructor(xConfig.windowOpts);
     splashScreen = new BrowserWindow(xConfig.splashScreenOpts);
     splashScreen.loadURL(`file://${xConfig.templateUrl}`);
     xConfig.closeWindow && splashScreen.on("close", () => {
